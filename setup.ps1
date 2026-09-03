@@ -1,38 +1,44 @@
-<#
+﻿<#
 .SYNOPSIS
-Instala las reglas globales de AI Handoff Protocol.
-
-.DESCRIPTION
-Este script copia las reglas de Gemini a la ruta de configuración global del usuario.
-Si usas Cursor, el script te dará instrucciones de cómo agregar la regla global.
+Instala las reglas globales de AI Handoff Protocol evaluando qué herramientas están instaladas.
 #>
 
-$geminiConfigDir = "$env:USERPROFILE\.gemini\config"
 $repoPath = $PSScriptRoot
-
 Write-Host "Iniciando instalación del protocolo de Handoff..." -ForegroundColor Cyan
 
-# Instalar para Gemini
-if (-not (Test-Path $geminiConfigDir)) {
-    Write-Host "Creando directorio global de Gemini..."
-    New-Item -ItemType Directory -Path $geminiConfigDir -Force | Out-Null
-}
-
-$geminiRuleSource = "$repoPath\gemini\GEMINI.md"
-$geminiRuleDest = "$geminiConfigDir\GEMINI.md"
-
-if (Test-Path $geminiRuleSource) {
-    Copy-Item -Path $geminiRuleSource -Destination $geminiRuleDest -Force
-    Write-Host "✓ Regla de Gemini instalada exitosamente en $geminiRuleDest" -ForegroundColor Green
+# 1. Validación y Configuración para Gemini (Antigravity)
+$geminiConfigDir = "$env:USERPROFILE\.gemini\config"
+if (Test-Path "$env:USERPROFILE\.gemini") {
+    Write-Host "
+[Gemini] Detectado entorno de Gemini Antigravity."
+    if (-not (Test-Path $geminiConfigDir)) { New-Item -ItemType Directory -Path $geminiConfigDir -Force | Out-Null }
+    Copy-Item -Path "$repoPath\gemini\GEMINI.md" -Destination "$geminiConfigDir\GEMINI.md" -Force
+    Write-Host "✓ Regla de Gemini instalada globalmente." -ForegroundColor Green
 } else {
-    Write-Host "✗ No se encontró el archivo $geminiRuleSource" -ForegroundColor Red
+    Write-Host "
+[Gemini] No se detectó carpeta local de Gemini, omitiendo..." -ForegroundColor DarkGray
 }
 
-# Instrucciones para Claude/Cursor
-Write-Host "`nPara Claude / Cursor IDE:" -ForegroundColor Yellow
-Write-Host "El archivo claude\claude-rules.md contiene las instrucciones para Claude."
-Write-Host "Para aplicarlo globalmente en Cursor:"
-Write-Host "1. Abre Cursor > Settings > General > Rules for AI"
-Write-Host "2. Pega el contenido de $repoPath\claude\claude-rules.md"
+# 2. Validación para Claude CLI
+if (Get-Command "claude" -ErrorAction SilentlyContinue) {
+    Write-Host "
+[Claude] CLI detectado."
+    Write-Host "✓ La regla para Claude está en claude\claude-rules.md. Claude CLI la leerá cuando se lo indiques." -ForegroundColor Green
+} else {
+    Write-Host "
+[Claude] CLI no instalado. Si usas la versión Web o Cursor, lee README.md." -ForegroundColor DarkGray
+}
 
-Write-Host "`n¡Instalación completada!" -ForegroundColor Cyan
+# 3. Validación para GitHub Copilot CLI (gh copilot)
+if (Get-Command "gh" -ErrorAction SilentlyContinue) {
+    $ghPlugins = (gh extension list 2>)
+    if ($ghPlugins -match "copilot") {
+        Write-Host "
+[Copilot CLI] Extensión 'gh copilot' detectada."
+        Write-Host "⚠️ Nota: Copilot CLI (gh copilot) está diseñado para comandos cortos en consola y no soporta inyección automática de system prompts globales como Cursor o Gemini. Para usar el 'Relevo', debes pasarlo como alias o usar la extensión de Copilot en VS Code (ver copilot\copilot-instructions.md)." -ForegroundColor Yellow
+    }
+}
+
+Write-Host "
+¡Instalación completada!" -ForegroundColor Cyan
+
