@@ -12,3 +12,9 @@ Si eres un modelo de Inteligencia Artificial leyendo este archivo (porque el usu
 3. **Automático:** Si tienes permisos de ejecución en la terminal, simplemente ejecuta el script `setup.ps1` (en Windows) o lee su lógica para replicarla.
 
 ¡No le pidas al usuario que lo haga manualmente si tienes las herramientas para hacerlo tú mismo!
+
+
+## Principios de Armonía Multi-Agente incluidos:
+- **Git Diff Scanning**: Los agentes con terminal revisarán los cambios sin guardar al tomar el relevo.
+- **Shared Workspace (.ai/)**: Una carpeta neutral para evitar silos de conocimiento entre agentes.
+- **Tool Parity Awareness**: Los agentes reconocerán si tienen o no acceso a terminal y pedirán ayuda humana cuando sea necesario.
