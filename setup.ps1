@@ -30,9 +30,9 @@ if (Test-Path $geminiRuleSource) {
 
 # Instrucciones para Claude/Cursor
 Write-Host "`nPara Claude / Cursor IDE:" -ForegroundColor Yellow
-Write-Host "El archivo claude\cursor-rules.md contiene las instrucciones para Claude."
+Write-Host "El archivo claude\claude-rules.md contiene las instrucciones para Claude."
 Write-Host "Para aplicarlo globalmente en Cursor:"
 Write-Host "1. Abre Cursor > Settings > General > Rules for AI"
-Write-Host "2. Pega el contenido de $repoPath\claude\cursor-rules.md"
+Write-Host "2. Pega el contenido de $repoPath\claude\claude-rules.md"
 
 Write-Host "`n¡Instalación completada!" -ForegroundColor Cyan
