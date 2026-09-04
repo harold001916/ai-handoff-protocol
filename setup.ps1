@@ -49,7 +49,7 @@ function Install-HandoffBlock {
         return
     }
 
-    $existing = Get-Content -Path $TargetFile -Raw
+    $existing = Get-Content -Path $TargetFile -Raw -Encoding UTF8
     $pattern = [regex]::Escape($MarkerBegin) + "(?s).*?" + [regex]::Escape($MarkerEnd)
 
     if ($existing -match $pattern) {
@@ -71,7 +71,7 @@ Write-Host "Iniciando instalacion del protocolo de Handoff..." -ForegroundColor 
 $geminiConfigDir = "$env:USERPROFILE\.gemini\config"
 if (Test-Path "$env:USERPROFILE\.gemini") {
     Write-Host "`n[Gemini] Detectado entorno de Gemini."
-    $geminiBlock = Get-Content -Path "$repoPath\gemini\GEMINI.md" -Raw
+    $geminiBlock = Get-Content -Path "$repoPath\gemini\GEMINI.md" -Raw -Encoding UTF8
     Install-HandoffBlock -TargetFile "$geminiConfigDir\GEMINI.md" -BlockContent $geminiBlock -Label "Gemini"
 } else {
     Write-Host "`n[Gemini] No se detecto carpeta local de Gemini (~/.gemini), omitiendo..." -ForegroundColor DarkGray
@@ -81,7 +81,7 @@ if (Test-Path "$env:USERPROFILE\.gemini") {
 if (Get-Command "claude" -ErrorAction SilentlyContinue) {
     Write-Host "`n[Claude] CLI detectado."
     $claudeConfigDir = "$env:USERPROFILE\.claude"
-    $claudeBlock = Get-Content -Path "$repoPath\claude\claude-rules.md" -Raw
+    $claudeBlock = Get-Content -Path "$repoPath\claude\claude-rules.md" -Raw -Encoding UTF8
     Install-HandoffBlock -TargetFile "$claudeConfigDir\CLAUDE.md" -BlockContent $claudeBlock -Label "Claude"
 } else {
     Write-Host "`n[Claude] CLI no instalado. Si usas la version Web o Cursor, agrega claude\claude-rules.md manualmente (ver README.md)." -ForegroundColor DarkGray
@@ -91,7 +91,7 @@ if (Get-Command "claude" -ErrorAction SilentlyContinue) {
 $copilotTarget = Join-Path $ProjectPath ".github\copilot-instructions.md"
 if (Test-Path $ProjectPath) {
     Write-Host "`n[Copilot] Instalando regla de proyecto en $copilotTarget"
-    $copilotBlock = Get-Content -Path "$repoPath\copilot\copilot-instructions.md" -Raw
+    $copilotBlock = Get-Content -Path "$repoPath\copilot\copilot-instructions.md" -Raw -Encoding UTF8
     Install-HandoffBlock -TargetFile $copilotTarget -BlockContent $copilotBlock -Label "Copilot"
 } else {
     Write-Host "`n[Copilot] ProjectPath '$ProjectPath' no existe, omitiendo. Pasa -ProjectPath <ruta-del-repo> para instalarlo ahi." -ForegroundColor DarkGray
